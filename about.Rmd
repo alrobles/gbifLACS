@@ -2,4 +2,4 @@
 title: "About This Website"
 ---
 
-More about this website.
+This website was created using [rmarkdown](https://github.com/rstudio/rmarkdown)
