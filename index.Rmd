@@ -1,8 +1,8 @@
 ---
-title: "GBIF abstract classification system"
+title: "GBIF LACS"
 ---
 
-Hello, Website!
+This is GBIF Literature Abstract Classification System. 
 
 For more information about simple R Markdown websites, please read the documentation at https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html.
 

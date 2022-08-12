@@ -1,6 +1,6 @@
 name: "gbif2022-website"
 navbar:
-  title: "GBIF abstract classification system"
+  title: "GBIF LACS"
   left:
     - text: "Home"
       href: index.html
