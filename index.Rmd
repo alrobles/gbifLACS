@@ -1,11 +1,33 @@
 ---
-title: "GBIF LACS"
+title: "GBIF LACS: GBIF Literature Cbstract classification System"
+author: "Angel Luis Robles Fernandez & Nathan Upham - Arizona State University"
+output:
+  html_document:
+    toc: true
+    toc_depth: 4
 ---
 ```{r setup, include=FALSE}
+library(knitr)
 knitr::opts_chunk$set(cache = TRUE)
 ```
 
-This is GBIF Literature Abstract Classification System
+This is GBIF Literature Abstract Classification System. 
+
+
+Try our host-parasite abstract classification API. Its designed to Evaluate if a specific abstract its related to host - parasite literature 
+
+```{r echo=FALSE}
+knitr::include_app(url = "https://alrobles.shinyapps.io/shinyabstractclass",height = "300px")
+```
+
+We use this API to asses GBIF literature in order to find papers related with host - parasite interactions. 
+
+Also try our search engine to discover papers related with mammal - parasite
+interactions in PubMed
+
+```{r echo=FALSE}
+knitr::include_app(url = "https://www.vidaanalytics.com/shiny/sample-apps/mammals_virus_text_class/",height = "600px")
+```
 
 # Introduction
 
@@ -17,6 +39,8 @@ Another objective is to carry out a topic analysis in the abstracts of the GBIF 
 
 Finally, all the information generated with these tools is available to the GBIF community for its free use in scientific research in the most open and transparent way possible, in accordance with our technical limitations.
 
+## Objectives
+***
 We show here a set of tools designed to
 
 - Find abstracts from literature stored in open data base through PubMed [entrez](https://www.ncbi.nlm.nih.gov/home/develop/api/) API and Cross Reference [crossref](https://api.crossref.org/) 
@@ -28,3 +52,8 @@ We show here a set of tools designed to
 
 - A GBIF Literature API wrap that retrives GBIF Literature information
 
+## Products
+
+
+## Methodology
+***
