@@ -16,7 +16,7 @@
 <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -30,7 +30,7 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
 <style type="text/css">
@@ -58,6 +58,7 @@ if (window.hljs) {
 
 
 
+<link rel="stylesheet" href="styles.css" type="text/css" />
 
 
 
@@ -268,18 +269,43 @@ $(document).ready(function () {
 </div>
 
 
-<p>This is GBIF Literature Abstract Classification System.</p>
-<p>For more information about simple R Markdown websites, please read
-the documentation at <a
-href="https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html"
-class="uri">https://bookdown.org/yihui/rmarkdown/rmarkdown-site.html</a>.</p>
-<p>Please also note that simple R Markdown sites are <em>not</em> based
-on <strong>blogdown</strong>. They are probably good for websites with
-only a few Rmd documents. For larger-scale and more sophisticated
-websites (such as blogs), you may want to use <strong>blogdown</strong>
-instead: <a href="https://github.com/rstudio/blogdown"
-class="uri">https://github.com/rstudio/blogdown</a>.</p>
+<p>This is GBIF Literature Abstract Classification System</p>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<p>The objective of this project is to have a tool that allows the
+classification of the abstracts related to the GBIF literature.</p>
+<p>A specific use case is the creation of a text classification model
+that identifies those abstracts related to host-parasite interactions
+and filters the literature available in the GBIF Literature API in order
+specifically search GBIF datasets associated with host - parasite
+interaction</p>
+<p>Another objective is to carry out a topic analysis in the abstracts
+of the GBIF literature and group the papers into these topics to observe
+the trend of research associated with GBIF in recent years.</p>
+<p>Finally, all the information generated with these tools is available
+to the GBIF community for its free use in scientific research in the
+most open and transparent way possible, in accordance with our technical
+limitations.</p>
+<p>We show here a set of tools designed to</p>
+<ul>
+<li><p>Find abstracts from literature stored in open data base through
+PubMed <a
+href="https://www.ncbi.nlm.nih.gov/home/develop/api/">entrez</a> API and
+Cross Reference <a
+href="https://api.crossref.org/">crossref</a></p></li>
+<li><p>Retrieve random abstracts from Cross Reference <a
+href="https://api.crossref.org/">crossref</a></p></li>
+<li><p>Generate models to classify abstracts from a specific topic using
+PU learning approach</p></li>
+<li><p>Deploy a web API with a abstract classification model to evaluate
+whether or not a given abstract belongs to the class of modeled
+abstracts</p></li>
+<li><p>A GBIF Literature API wrap that retrives GBIF Literature
+information</p></li>
+</ul>
+</div>
 
+<p>Except where otherwise noted, content on this site is licensed under the CC-BY license.</p>
 
 
 

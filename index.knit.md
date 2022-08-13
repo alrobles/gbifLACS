@@ -1,9 +1,7 @@
 ---
 title: "GBIF LACS"
 ---
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(cache = TRUE)
-```
+
 
 This is GBIF Literature Abstract Classification System
 

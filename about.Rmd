@@ -1,5 +1,9 @@
 ---
 title: "About This Website"
 ---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
 
-This website was created using [rmarkdown](https://github.com/rstudio/rmarkdown)
+This website was created using [rmarkdown](https://github.com/rstudio/rmarkdown) by Angel Luis Robles Fernandez.
+Angel is PhD Student at Dr. Nathan Upham lab in Arizona State University (2022)
