@@ -12,7 +12,7 @@ output:
 bibliography: references.bib  
 ---
 ```{r setup, include=FALSE}
-library(knitr)
+
 knitr::opts_chunk$set(cache = TRUE)
 ```
 
@@ -21,8 +21,11 @@ This is GBIF Literature Abstract Classification System. Its designed to score if
 *** 
 Try our products, just click on the link in the left bar!
 
-
+```{r}
+library("vembedr")
 embed_url("https://youtu.be/C49WbusD1xc")
+```
+
 
 # Introduction
 
