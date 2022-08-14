@@ -259,6 +259,9 @@ $(document).ready(function () {
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Articles</li>
     <li>
+      <a href="abstract-classification-PULearning.html">Abstract classification using PU Learning</a>
+    </li>
+    <li>
       <a href="topic-modeling.html">Topic Modeling</a>
     </li>
     <li>
@@ -294,7 +297,12 @@ $(document).ready(function () {
 library(tidyverse)
 library(textcat)
 library(text2vec)</code></pre>
-<p>Part A</p>
+</div>
+<div id="part-a.-extract-and-cleaning-gbif-literature"
+class="section level1">
+<h1>Part A. Extract and cleaning GBIF Literature</h1>
+<p>We extract GBIF Literature using our <code>gbifliterature</code> R
+package.</p>
 <pre class="r"><code>gbif_lit_list &lt;- 2000:2022 %&gt;%
   purrr::map(gbifliterature::get_gbif_literature_year)
 gbif_lit_df &lt;- gbif_lit_list %&gt;% purrr::reduce(dplyr::bind_rows)
@@ -306,11 +314,15 @@ gbif_lit_df_abstracts_language &lt;- gbif_lit_df %&gt;%
   dplyr::select(title, abstract, year, topics) %&gt;%
   dplyr::mutate(language = textcat::textcat(abstract))
 gbif_lit_df_abstracts_english &lt;- gbif_lit_df_abstracts_language %&gt;% filter(language == &quot;english&quot;)</code></pre>
-<p>Part B</p>
-<pre class="r"><code>gbif_lit_df_abstracts_english &lt;- gbif_lit_df_abstracts_english %&gt;%
-  select(title, abstract, year) %&gt;%
-  mutate(abstract = prep_fun(abstract)) %&gt;%
-  mutate(abstract = str_trim(abstract))</code></pre>
+</div>
+<div id="part-b.-document-term-matrix" class="section level1">
+<h1>Part B. Document Term Matrix</h1>
+<p>In this part we process all the abstracts and create a vocabulary
+using <a href="http://text2vec.org/">text2vec</a> R packages.</p>
+<p>We must be care to remove non english characters and stopping
+words.</p>
+<p>After that we create a Document term matrix using
+<code>create_dtm</code> function from <code>text2vec</code> package</p>
 <pre class="r"><code>Abstracts &lt;- gbif_lit_df_abstracts_english$abstract
 
 it = text2vec::itoken(Abstracts,
@@ -329,25 +341,37 @@ v &lt;- v %&gt;% dplyr::filter(nchar(term) &gt;=  3)
 
 pruned_vocab = text2vec::prune_vocabulary(v, term_count_min = 10,
                                           doc_count_min = 10)
-
-
-readr::write_rds(pruned_vocab, &quot;data-rawgbif_literature_pruned_vocab.rds&quot;)
 vectorizer &lt;-  text2vec::vocab_vectorizer(pruned_vocab)
-dtm  &lt;-  text2vec::create_dtm(it, vectorizer)
-tfidf = text2vec::TfIdf$new()
-
-lda_model &lt;-  LDA$new(n_topics = 10,
+dtm  &lt;-  text2vec::create_dtm(it, vectorizer)</code></pre>
+<p>We evaluate lda_model using the document term matrix.</p>
+<pre class="r"><code>lda_model &lt;-  LDA$new(n_topics = 10,
                       doc_topic_prior = 0.1,
                       topic_word_prior = 0.01)
 
 doc_topic_distr &lt;-  lda_model$fit_transform(x = dtm, n_iter = 1000,
-                                            convergence_tol = 0.001, n_check_convergence = 25,
-                                            progressbar = FALSE)
+                                            convergence_tol = 0.001,
+                                            n_check_convergence = 25,
+                                            progressbar = FALSE)</code></pre>
+<pre class="r"><code>lda_model$get_top_words(n = 10, topic_number = c(1:10), lambda = 0.4)
+lda_model$plot()</code></pre>
+<p>Finally we get a plot with the words associated to each topic.</p>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>
+LDAvis
+</title>
+<script src="/LDAvisualization/d3.v3.js"></script>
+<script src="/LDAvisualization/ldavis.js"></script>
+<link rel="stylesheet" type="text/css" href="/LDAvisualization/lda.css">
+</head>
+<body>
+<div id="lda">
 
-lda_model$get_top_words(n = 10, topic_number = c(1:10), lambda = 0.4)
-#DIR = &quot;data-raw/LDAvisualization&quot;
-lda_model$plot()
-# now you can serve it from other session</code></pre>
+</div>
+<script>
+    var vis = new LDAvis("#lda", "LDAvisualization/lda.json");
+  </script>
+</body>
 </div>
 
 <p>Except where otherwise noted, content on this site is licensed under the CC-BY license.</p>

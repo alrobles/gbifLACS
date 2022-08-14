@@ -24,15 +24,18 @@ Try our products, just click on the link in the left bar!
 
 # Introduction
 
-What does GBIF lack? GBIF provides free and open access to over 2 billion occurrence records from across the tree of life, as well as about 8,000 peer-reviewed publications that use those records. However, GBIF lacks an efficient means of finding which publications contain *ecological data* regarding the interaction of two or more species -- core information needed to connect occurrence records that were observed directly interacting (e.g., as host-parasite or host-virus). In the context of COVID-19 and previous outbreaks of Ebola and Marburg viruses, this type of interaction-based biodiversity information has become essential. 
+What does GBIF lack? GBIF provides free and open access to over 2 billion occurrence records from species across the tree of life, as well as about 8,000 peer-reviewed publications that describe those records. However, GBIF lacks an efficient means of finding which publications contain *ecological data* regarding the interaction of two or more species -- core information needed to connect occurrences if they were observed interacting (e.g., host-parasite, host-virus). In the context of COVID-19 and previous viral outbreaks of Ebola and Marburg, this type of interaction-based biodiversity information has become essential synthetic risk modeling.
 
-To fill this gap, we here present GBIF LACS -- the Literature Abstract Classification System -- to efficiently classify published abstracts using machine learning relative to a model pre-trained from open databases. The objective of this project is to create tools to enable the classification of GBIF abstracts related to their underlying topics.
+To fill this gap, we here present GBIF LACS – the GBIF Literature Abstract Classification System – a set of workflows for efficiently classifying published abstracts using a machine learning model trained on open databases. The objective of this project is to establish tools for the high-throughput classification of GBIF abstracts related to their contained topics and for use in linking described records in meaningful ways.
 
-Our specific use case is the creation of a text classification model that identifies those abstracts related to host-parasite interactions and filters the literature available in the GBIF Literature API in order specifically search GBIF datasets associated with host - parasite interaction.
+Our specific use case is to classify abstracts that are related to *host-parasite interactions*. We accomplish this goal by creating a text classification model trained on (i) abstracts known to contain host-parasite interactions (positive examples); and (ii) abstracts randomly drawn (unlabeled examples). A positive-unlabeled (PU) machine learning model allows to classify the probability that a GBIF given abstract contains host-parasite interactions. We use the GBIF Literature API to filter and search the abstracts that are already linked with GBIF datasets for the presence of host-parasite interactions. The resulting classification scores from the PU model are then annotated on the parsed GBIF abstracts and served in a friendly web app for later re-use.
 
-Another objective is to carry out a topic analysis in the abstracts of the GBIF literature and group the papers into these topics to observe the trend of research associated with GBIF in recent years.
+We additionally carry out a *topic analysis* in order to group the GBIF abstracts in multi-dimensional topic space. These topic groups show trends in GBIF-associated research generally, as well as in the context of host-parasite interactions that are documented in GBIF datasets. Comparison of topic groups relative to PU classification scores are designed to further disentangle research foci of abstracts, and will facilitate later re-integration of this information into GBIF.
 
-Finally, all the information generated with these tools is available to the GBIF community for its free use in scientific research in the most open and transparent way possible, in accordance with our technical limitations.
+Finally, all the information and tools generated for this project are free and openly available for the GBIF community to re-use and apply to additional research questions. Four open-source products were created to help disseminate this work (Fig. 1): (i) an R package called [*abstractsHostParasites*](https://github.com/alrobles/abstractsHostParasites), which includes all tools for generating PU text classification models and processing the associated data; (ii) [*lacsRestAPI*](https://github.com/alrobles/lacsRestAPI), the API used to classify GBIF abstracts relative to the text classification model; (iii) an annotated database of the parsed GBIF abstracts appended with the classification scores (insert link); and (iv) the web app hosted at [https://gbif.lacs.info/](https://gbif.lacs.info/) for exploring, downloading, and re-using all project information.
+
+Overall, it is our goal that by linking GBIF abstracts with the underlying ecological interaction records that they describe, we will be one step closer to creating a comprehensive ecological knowledge graph describing Earth’s complex and increasingly threatened ecosystems.
+
 
 # Objectives
 ***
@@ -61,7 +64,7 @@ knitr::include_graphics("image/gbifLACS_diagram.jpeg")
 ### Initial data collection
 First we retrive research papers information from Glogal Mammal Parasite Database [gmpd](https://gmpd2.ecology.uga.edu/) y Zover Database  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi). We extract all the avaliable citations in both database. The information available in both open databases does not contain abstracts of the articles.
 
-We provide this data throuth the following link in [csv](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv) format.
+We provide this data through the following link in [csv](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv) format.
 
 ### Abstract search
 Follow this we search information from [gmpd](https://gmpd2.ecology.uga.edu/) and  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi) in order to find the abstract and the doi related to each citation in mencionated sources. We search in [crossref](https://www.crossref.org/) and [PubMed](https://pubmed.ncbi.nlm.nih.gov/) throught their respective 'API'.
@@ -77,6 +80,11 @@ Both the abstract search, the generation of random abstracts and the implementat
 ## REST API model implementation
 In order to make available to the entire GBIF community and other research communities we implement our abstract classification model as a REST API following @selivanov2022rest. We share share this code on [github](https://github.com/alrobles/lacsRestAPI). We deploy this API on a personal server at "http://www.vidaanalytics.com:8082/scoreabstract". You also can try our shiny app to copy and paste an abstract to get evaluated. (See below)
 
+## GBIF Literature Analysis
+We create a conection throught GBIF Literature API via our gbifliterature R packages avaliable on [GitHub](https://github.com/alrobles/gbifliterature). With this tool we retrive the information in GBIF looking only for peer review papers with abstracts in english language.
+We curate this information and provide this data through the following link in [csv](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/gbif_literature_english.csv) format.
+
+
 
 
 
@@ -90,13 +98,19 @@ knitr::include_app(url = "https://alrobles.shinyapps.io/shinyabstractclass",heig
 
 ***
 
+
+***
+
+This is our topic trends we model through literature
+```{r echo=FALSE}
+knitr::include_app(url = "https://alrobles.shinyapps.io/gbifLiteratureTopics/",height = "600px")
+```
+***
+
+***
 Also try our search engine to discover papers related with mammal - parasite
 interactions in PubMed
 
 ```{r echo=FALSE}
 knitr::include_app(url = "https://www.vidaanalytics.com/shiny/sample-apps/mammals_virus_text_class/",height = "600px")
 ```
-***
-
-
-***

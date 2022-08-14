@@ -7,6 +7,8 @@ navbar:
     - text: "Workflow"
       menu:
         - text: "Articles"
+        - text: "Abstract classification using PU Learning"
+          href: abstract-classification-PULearning.html
         - text: "Topic Modeling"
           href: topic-modeling.html
         - text: "Get GBIF literature data"

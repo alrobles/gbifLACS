@@ -9,10 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Angel Luis Robles Fernandez &amp; Nathan Upham - Arizona State University" />
+<meta name="author" content="Angel Robles" />
 
 
-<title>gbifLACS Workflow</title>
+<title>Abstract Classification with R</title>
 
 <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -284,15 +284,153 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">gbifLACS Workflow</h1>
-<h4 class="author">Angel Luis Robles Fernandez &amp; Nathan Upham -
-Arizona State University</h4>
+<h1 class="title toc-ignore">Abstract Classification with R</h1>
+<h4 class="author">Angel Robles</h4>
+<h4 class="date">8/14/2022</h4>
 
 </div>
 
 
-<p>In this Vignette we describe more deeply the workflow we follow to
-reach our goal.</p>
+<div id="abstract-classification-using-lacs-framework"
+class="section level2">
+<h2>Abstract Classification using LACS framework</h2>
+<p>Here we show how to use LACS framework and our R packages to classify
+abstracts for a specific scientific literature topic. In this exercise
+we are going to model from GMPD and Zover database abstracts and
+classify GBIF abstracts.</p>
+<pre class="r"><code>library(tidyverse)
+library(tidymodels)
+library(text2vec)
+library(ggplot2)
+
+db_abstracts &lt;-  readr::read_csv(&quot;https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv&quot;)
+#View(db_abstracts)
+db_abstracts &lt;- db_abstracts %&gt;%
+  mutate(Label.obs = ifelse(class == &quot;parasite&quot;, 1, 0))
+train_test_split &lt;- initial_split(db_abstracts, prop = 0.65)
+db_abstracts_train &lt;- training(train_test_split)
+db_abstracts_test &lt;- testing(train_test_split)
+db_abstracts_train %&gt;% count(class)
+db_abstracts_test %&gt;% count(class)
+
+
+#db_abstracts &lt;- db_abstracts %&gt;% 
+#mutate(language = textcat(search_abstract))
+
+
+prep_fun = function(x) {
+  # make text lower case
+  x = str_to_lower(x)
+  # remove only numbers
+  x = str_replace_all(x, &quot;^\\d+&quot;, &quot; &quot;)
+  # remove non-alphanumeric symbols
+  x = str_replace_all(x, &quot;[^[:alnum:]]&quot;, &quot; &quot;)
+  # collapse multiple spaces
+  x = str_replace_all(x, &quot;\\s+&quot;, &quot; &quot;)
+  # remove english
+  ifelse(stri_enc_isascii(x), x, str_replace_all(x, &quot;.&quot; , &quot;&quot;) )
+}
+
+it_train = itoken(db_abstracts_train$abstract,
+                  preprocessor = tolower, 
+                  tok_fun = word_tokenizer,
+                  progressbar = FALSE)
+
+it_test = itoken(db_abstracts_test$abstract,
+                 preprocessor = tolower, 
+                 tok_fun = word_tokenizer,
+                 progressbar = FALSE)
+library(stringi)
+
+v &lt;-  create_vocabulary(it_train, 
+                        ngram = c(1L, 4L), 
+                        stopwords = stopwords::stopwords())
+
+v &lt;- v %&gt;% dplyr::filter(!grepl(pattern = &quot;^[0-9]&quot;, term ))
+v &lt;- v %&gt;% dplyr::filter(!grepl(pattern = &quot;[0-9]$&quot;, term ))
+# v &lt;- v %&gt;% dplyr::filter(!grepl(pattern = &quot;^[0-9]&quot;, .data$term ))
+v &lt;- v %&gt;% dplyr::filter(grepl(pattern = &quot;^[a-z]&quot;, .data$term ))
+v &lt;- v %&gt;% dplyr::filter(stringi::stri_enc_isascii(term))
+v &lt;- v %&gt;% dplyr::filter(nchar(term) &gt;=  4)
+v &lt;- v %&gt;% dplyr::filter(!grepl(pattern = &quot;^[0-9]&quot;, term ))
+#vectorizer &lt;-  vocab_vectorizer(v)
+
+pruned_vocab = prune_vocabulary(v, 
+                                term_count_min = 20
+                                #,doc_proportion_max = 0.1
+                                #,doc_proportion_min = 0.01
+)
+#pruned_vocab_pulearning &lt;- pruned_vocab
+
+#write_rds(pruned_vocab_pulearning, &quot;pruned_vocab_pulearning.rds&quot;)
+
+vectorizer = vocab_vectorizer(pruned_vocab)
+dtm_train &lt;-  create_dtm(it_train, vectorizer)
+dtm_test &lt;-  create_dtm(it_test, vectorizer)
+tfidf = TfIdf$new()
+dtm_df_tfidf_train &lt;- fit_transform(dtm_train, tfidf)
+dtm_df_tfidf_test &lt;- fit_transform(dtm_test, tfidf)
+
+dtm_df_train &lt;- as.matrix(dtm_df_tfidf_train) %&gt;% as_tibble() 
+dtm_df_test &lt;- as.matrix(dtm_df_tfidf_test) %&gt;% as_tibble() 
+
+dtm_df_train$class &lt;-  db_abstracts_train[[&#39;class&#39;]]
+dtm_df_test$class &lt;-  db_abstracts_test[[&#39;class&#39;]]
+
+# Split test/training sets
+#library(tidymodels)
+# source(&quot;PLUR.R&quot;)
+# library(glmnet)
+
+Prediction &lt;- 
+  PLUS(train_data = dtm_df_tfidf_train,
+       Label.obs = db_abstracts_train[[&quot;Label.obs&quot;]],
+       Sample_use_time = 100,
+       l.rate = 1, qq = 0.15)
+
+Coef_Matrix &lt;- Prediction$coef1 %&gt;% as.matrix()
+
+
+yhat_pulearning_prob_vec &lt;- predict(Prediction$fit.pi, 
+                                    s = &#39;lambda.min&#39;, 
+                                    newx=dtm_df_tfidf_test, 
+                                    type=&quot;response&quot;) %&gt;% as.numeric()
+
+yhat_pulearning_class_vec &lt;- predict(Prediction$fit.pi, 
+                                     s = &#39;lambda.min&#39;, 
+                                     newx=dtm_df_tfidf_test, 
+                                     type=&quot;class&quot;) %&gt;% as.numeric()
+
+# Format test data and predictions for yardstick metrics
+estimates_pulearning_tbl &lt;- tibble(
+  truth      = factor(db_abstracts_test[[&quot;Label.obs&quot;]], levels = c(0, 1)),
+  estimate   = factor(yhat_pulearning_class_vec),
+  class_prob = yhat_pulearning_prob_vec
+)
+
+
+estimates_pulearning_tbl %&gt;% yardstick::conf_mat(truth, estimate)
+
+
+estimates_pulearning_tbl %&gt;% arrange(class_prob) %&gt;% 
+  mutate(id = row_number()) %&gt;% 
+  ggplot() + geom_point(aes(id, class_prob))
+#estimates_keras_tbl %&gt;% conf_mat(truth, estimate)
+
+estimates_pulearning_tbl %&gt;%
+  yardstick::f_meas(truth, estimate, beta = 1)
+
+estimates_pulearning_tbl %&gt;%
+  arrange(class_prob) %&gt;% 
+  pROC::roc_(response = &quot;truth&quot;, predictor = &quot;class_prob&quot;) %&gt;% 
+  plot()
+
+pROC::auc(estimates_pulearning_tbl$truth, estimates_pulearning_tbl$class_prob,
+          partial.auc=c(1, .8), partial.auc.focus=&quot;se&quot;,
+          partial.auc.correct = TRUE)
+# glmnet_classifier_pulearning &lt;- Prediction$fit.pi
+# write_rds(glmnet_classifier_pulearning, &quot;glmnet_classifier_pulearning_7_9_22.rds&quot;)</code></pre>
+</div>
 
 <p>Except where otherwise noted, content on this site is licensed under the CC-BY license.</p>
 

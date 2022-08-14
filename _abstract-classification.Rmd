@@ -1,22 +1,37 @@
 ---
-title: "gbif Topic Modelling"
+title: "Abstract Classification with R"
 author: "Angel Robles"
 date: "8/14/2022"
 output: html_document
 ---
-
+  
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Abstract Classification
 
-
+First we install our R packages:
+```{r eval = FALSE}
+devtools::install_github("alrobles/abstractsHostParasites")
+```
 ```{r eval = FALSE}
 library(gbifliterature)
 library(tidyverse)
 library(textcat)
 library(text2vec)
+```
+
+```{r eval=FALSE}
+df_abstracts <- readr::read_csv("https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv")
+
+
+
+models <- df_abstracts %>% 
+  automodel_pu_abstracts(term_count = 1,
+                         split_prop = 0.85,
+                         doc_prop_max = 0.9,
+                         doc_prop_min = 0)
 ```
 
 # Part A. Extract and cleaning GBIF Literature
@@ -49,9 +64,9 @@ After that we create a Document term matrix using `create_dtm` function from `te
 Abstracts <- gbif_lit_df_abstracts_english$abstract
 
 it = text2vec::itoken(Abstracts,
-                           preprocessor = prep_fun,
-                           tok_fun = word_tokenizer,
-                           progressbar = FALSE)
+                      preprocessor = prep_fun,
+                      tok_fun = word_tokenizer,
+                      progressbar = FALSE)
 stop_words <- unlist(stopwords::data_stopwords_nltk)
 
 v <-  text2vec::create_vocabulary(it,
@@ -97,11 +112,11 @@ Finally we get a plot with the words associated to each topic.
   <script src="/LDAvisualization/d3.v3.js"></script>
   <script src="/LDAvisualization/ldavis.js"></script>
   <link rel="stylesheet" type="text/css" href="/LDAvisualization/lda.css">
-</head>
-
-<body>
+  </head>
+  
+  <body>
   <div id = "lda"></div>
   <script>
-    var vis = new LDAvis("#lda", "LDAvisualization/lda.json");
-  </script>
-</body>
+  var vis = new LDAvis("#lda", "LDAvisualization/lda.json");
+</script>
+  </body>

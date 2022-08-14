@@ -357,6 +357,9 @@ div.tocify {
   <ul class="dropdown-menu" role="menu">
     <li class="dropdown-header">Articles</li>
     <li>
+      <a href="abstract-classification-PULearning.html">Abstract classification using PU Learning</a>
+    </li>
+    <li>
       <a href="topic-modeling.html">Topic Modeling</a>
     </li>
     <li>
@@ -397,33 +400,59 @@ find papers related with host - parasite interactions.</p>
 <div id="introduction" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p>What does GBIF lack? GBIF provides free and open access to over 2
-billion occurrence records from across the tree of life, as well as
-about 8,000 peer-reviewed publications that use those records. However,
-GBIF lacks an efficient means of finding which publications contain
-<em>ecological data</em> regarding the interaction of two or more
-species – core information needed to connect occurrence records that
-were observed directly interacting (e.g., as host-parasite or
-host-virus). In the context of COVID-19 and previous outbreaks of Ebola
-and Marburg viruses, this type of interaction-based biodiversity
-information has become essential.</p>
-<p>To fill this gap, we here present GBIF LACS – the Literature Abstract
-Classification System – to efficiently classify published abstracts
-using machine learning relative to a model pre-trained from open
-databases. The objective of this project is to create tools to enable
-the classification of GBIF abstracts related to their underlying
-topics.</p>
-<p>Our specific use case is the creation of a text classification model
-that identifies those abstracts related to host-parasite interactions
-and filters the literature available in the GBIF Literature API in order
-specifically search GBIF datasets associated with host - parasite
-interaction.</p>
-<p>Another objective is to carry out a topic analysis in the abstracts
-of the GBIF literature and group the papers into these topics to observe
-the trend of research associated with GBIF in recent years.</p>
-<p>Finally, all the information generated with these tools is available
-to the GBIF community for its free use in scientific research in the
-most open and transparent way possible, in accordance with our technical
-limitations.</p>
+billion occurrence records from species across the tree of life, as well
+as about 8,000 peer-reviewed publications that describe those records.
+However, GBIF lacks an efficient means of finding which publications
+contain <em>ecological data</em> regarding the interaction of two or
+more species – core information needed to connect occurrences if they
+were observed interacting (e.g., host-parasite, host-virus). In the
+context of COVID-19 and previous viral outbreaks of Ebola and Marburg,
+this type of interaction-based biodiversity information has become
+essential synthetic risk modeling.</p>
+<p>To fill this gap, we here present GBIF LACS – the GBIF Literature
+Abstract Classification System – a set of workflows for efficiently
+classifying published abstracts using a machine learning model trained
+on open databases. The objective of this project is to establish tools
+for the high-throughput classification of GBIF abstracts related to
+their contained topics and for use in linking described records in
+meaningful ways.</p>
+<p>Our specific use case is to classify abstracts that are related to
+<em>host-parasite interactions</em>. We accomplish this goal by creating
+a text classification model trained on (i) abstracts known to contain
+host-parasite interactions (positive examples); and (ii) abstracts
+randomly drawn (unlabeled examples). A positive-unlabeled (PU) machine
+learning model allows to classify the probability that a GBIF given
+abstract contains host-parasite interactions. We use the GBIF Literature
+API to filter and search the abstracts that are already linked with GBIF
+datasets for the presence of host-parasite interactions. The resulting
+classification scores from the PU model are then annotated on the parsed
+GBIF abstracts and served in a friendly web app for later re-use.</p>
+<p>We additionally carry out a <em>topic analysis</em> in order to group
+the GBIF abstracts in multi-dimensional topic space. These topic groups
+show trends in GBIF-associated research generally, as well as in the
+context of host-parasite interactions that are documented in GBIF
+datasets. Comparison of topic groups relative to PU classification
+scores are designed to further disentangle research foci of abstracts,
+and will facilitate later re-integration of this information into
+GBIF.</p>
+<p>Finally, all the information and tools generated for this project are
+free and openly available for the GBIF community to re-use and apply to
+additional research questions. Four open-source products were created to
+help disseminate this work (Fig. 1): (i) an R package called <a
+href="https://github.com/alrobles/abstractsHostParasites"><em>abstractsHostParasites</em></a>,
+which includes all tools for generating PU text classification models
+and processing the associated data; (ii) <a
+href="https://github.com/alrobles/lacsRestAPI"><em>lacsRestAPI</em></a>,
+the API used to classify GBIF abstracts relative to the text
+classification model; (iii) an annotated database of the parsed GBIF
+abstracts appended with the classification scores (insert link); and
+(iv) the web app hosted at <a
+href="https://gbif.lacs.info/">https://gbif.lacs.info/</a> for
+exploring, downloading, and re-using all project information.</p>
+<p>Overall, it is our goal that by linking GBIF abstracts with the
+underlying ecological interaction records that they describe, we will be
+one step closer to creating a comprehensive ecological knowledge graph
+describing Earth’s complex and increasingly threatened ecosystems.</p>
 </div>
 <div id="objectives" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Objectives</h1>
@@ -467,7 +496,7 @@ Zover Database <a
 href="http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi">zover</a>. We extract
 all the avaliable citations in both database. The information available
 in both open databases does not contain abstracts of the articles.</p>
-<p>We provide this data throuth the following link in <a
+<p>We provide this data through the following link in <a
 href="https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv">csv</a>
 format.</p>
 </div>
@@ -526,6 +555,18 @@ class="uri">http://www.vidaanalytics.com:8082/scoreabstract</a>”. You
 also can try our shiny app to copy and paste an abstract to get
 evaluated. (See below)</p>
 </div>
+<div id="gbif-literature-analysis" class="section level2" number="3.3">
+<h2><span class="header-section-number">3.3</span> GBIF Literature
+Analysis</h2>
+<p>We create a conection throught GBIF Literature API via our
+gbifliterature R packages avaliable on <a
+href="https://github.com/alrobles/gbifliterature">GitHub</a>. With this
+tool we retrive the information in GBIF looking only for peer review
+papers with abstracts in english language. We curate this information
+and provide this data through the following link in <a
+href="https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/gbif_literature_english.csv">csv</a>
+format.</p>
+</div>
 </div>
 <div id="products" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Products</h1>
@@ -533,12 +574,15 @@ evaluated. (See below)</p>
 <iframe src="https://alrobles.shinyapps.io/shinyabstractclass?showcase=0" width="672" height="300px" data-external="1">
 </iframe>
 <hr />
+<hr />
+<p>This is our topic trends we model through literature
+<iframe src="https://alrobles.shinyapps.io/gbifLiteratureTopics/?showcase=0" width="672" height="600px" data-external="1"></iframe>
+***</p>
+<hr />
 <p>Also try our search engine to discover papers related with mammal -
 parasite interactions in PubMed</p>
 <iframe src="https://www.vidaanalytics.com/shiny/sample-apps/mammals_virus_text_class/?showcase=0" width="672" height="600px" data-external="1">
 </iframe>
-<hr />
-<hr />
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-selivanov2022rest" class="csl-entry">
 Selivanov, Dmitry, and Artem Klevtsov. 2022. <em>RestRserve: A Framework
