@@ -73,15 +73,10 @@ This text classification problem can be framed in the class [one-class classific
 For solve this one-class classification problem we follow @zhou2022plus to implement Positive and unlabeled Learning from Unbalanced cases and Sparse structures (PLUS) algorithm. In order to ingest data to this algorithm we assign the random abstracts as an unknown class and transform the abstract table in a document term matrix taking in account the n-grams (from 1 to 5). This give us a vocabulary of around 1 500 000 terms in 4000 documents. We implement this step in a convenient wrap that given a data frame with abstracts of both clases (target class and unknown class) automatically generates both the model and the necessary vocabulary to classify if an abstract belongs to one (targe) or another (unknown) class.
 
 
+Both the abstract search, the generation of random abstracts and the implementation of the PU learning model are available on [github](https://github.com/alrobles/abstractsHostParasites) in our abstractsHosParasites R package. Here we implement an abstract classification model for host parasite literature. 
 
-
-### 
-
-
-
-
-
-### PU learning
+## REST API model implementation
+In order to make available to the entire GBIF community
 
 # Products
 
