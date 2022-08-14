@@ -9,6 +9,7 @@ output:
     toc_float: true
     number_sections: true
     theme: lumen
+bibliography: references.bib  
 ---
 ```{r setup, include=FALSE}
 library(knitr)
@@ -23,9 +24,11 @@ Try our products, just click on the link in the left bar!
 
 # Introduction
 
-The objective of this project is to have a tool that allows the classification of the abstracts related to the GBIF literature.
+What does GBIF lack? GBIF provides free and open access to over 2 billion occurrence records from across the tree of life, as well as about 8,000 peer-reviewed publications that use those records. However, GBIF lacks an efficient means of finding which publications contain *ecological data* regarding the interaction of two or more species -- core information needed to connect occurrence records that were observed directly interacting (e.g., as host-parasite or host-virus). In the context of COVID-19 and previous outbreaks of Ebola and Marburg viruses, this type of interaction-based biodiversity information has become essential. 
 
-A specific use case is the creation of a text classification model that identifies those abstracts related to host-parasite interactions and filters the literature available in the GBIF Literature API in order specifically search GBIF datasets associated with host - parasite interaction 
+To fill this gap, we here present GBIF LACS -- the Literature Abstract Classification System -- to efficiently classify published abstracts using machine learning relative to a model pre-trained from open databases. The objective of this project is to create tools to enable the classification of GBIF abstracts related to their underlying topics.
+
+Our specific use case is the creation of a text classification model that identifies those abstracts related to host-parasite interactions and filters the literature available in the GBIF Literature API in order specifically search GBIF datasets associated with host - parasite interaction.
 
 Another objective is to carry out a topic analysis in the abstracts of the GBIF literature and group the papers into these topics to observe the trend of research associated with GBIF in recent years.
 
@@ -33,9 +36,10 @@ Finally, all the information generated with these tools is available to the GBIF
 
 # Objectives
 ***
-We show here a set of tools designed to
+We show here a set of tools designed to:
 
-* Find abstracts from literature stored in open data base through PubMed [entrez](https://www.ncbi.nlm.nih.gov/home/develop/api/) API and Cross Reference [crossref](https://api.crossref.org/) 
+* Find abstracts from literature stored in open databases through PubMed [entrez](https://www.ncbi.nlm.nih.gov/home/develop/api/) API and Cross Reference [crossref](https://api.crossref.org/) 
+
 * Retrieve random abstracts from Cross Reference [crossref](https://api.crossref.org/) 
 
 * Generate models to classify abstracts from a specific topic using PU learning approach
@@ -52,6 +56,32 @@ The scheme below represents the overall workflow
 ```{r gaps map 1, fig.cap="Fig 1. Scheme representing the main steps of the gbif LACS workflow", echo=FALSE, out.width = '80%', fig.align="center"}
 knitr::include_graphics("image/gbifLACS_diagram.jpeg")
 ```
+
+## Host Parasite models
+### initial data collection
+First we retrive research papers information from Glogal Mammal Parasite Database [gmpd](https://gmpd2.ecology.uga.edu/) y Zover Database  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi). We extract all the avaliable citations in both database. The information available in both open databases does not contain abstracts of the articles.
+
+We provide this data throuth the following link in [csv](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv) format.
+
+### Abstract search
+Follow this we search information from [gmpd](https://gmpd2.ecology.uga.edu/) and  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi) in order to find the abstract and the doi related to each citation in mencionated sources. We search in [crossref](https://www.crossref.org/) and [PubMed](https://pubmed.ncbi.nlm.nih.gov/) throught their respective 'API'.
+
+### Random abstracts
+This text classification problem can be framed in the class [one-class classification](https://en.wikipedia.org/wiki/One-class_classification) problem type. For this reason we connect to [crossref API](https://api.crossref.org/swagger-ui/index.html) and generate a random abstracts table. 
+
+### PU learning
+For solve this one-class classification problem we follow @zhou2022plus to implement Positive and unlabeled Learning from Unbalanced cases and Sparse structures (PLUS) algorithm. In order to ingest data to this algorithm we assign the random abstracts as an unknown class and transform the abstract table in a document term matrix taking in account the n-grams (from 1 to 5). This give us a vocabulary of around 1 500 000 terms in 4000 documents. We implement this step in a convenient wrap that given a data frame with abstracts of both clases (target class and unknown class) automatically generates both the model and the necessary vocabulary to classify if an abstract belongs to one (targe) or another (unknown) class.
+
+
+
+
+### 
+
+
+
+
+
+### PU learning
 
 # Products
 

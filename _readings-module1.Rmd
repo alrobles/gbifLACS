@@ -1,5 +1,5 @@
 ---
-title: "GBIF LACS: GBIF Literature Cbstract classification System"
+title: "GBIF LACS: GBIF Literature Abstract classification System"
 author: "Angel Luis Robles Fernandez & Nathan Upham - Arizona State University"
 output:
   html_document:
