@@ -1,5 +1,8 @@
 ---
 title: "How to Retrive GBIF Literature"
+author: "Angel Robles"
+date: "8/14/2022"
+output: html_document
 ---
 
 ```{r, include = FALSE}
@@ -16,7 +19,7 @@ In this vignette we are going to download all GBIF literature available using
 our `gbifliterature` R package.
 
 The first step is install the package and also the `purrr` package to help us in download all literature.
-```{r setup}
+```{r eval=FALSE}
 install.packages("purrr")
 install.packages("remotes")
 remotes::install_github("alrobles/gbifliterature")
@@ -26,7 +29,7 @@ remotes::install_github("alrobles/gbifliterature")
 # Example GBIF literature by year
 We starting download all the literature from 2022. We use `get_gbif_literature_year` to get the literature for the specific 2022 year from the API.
 
-```{r}
+```{r eval=FALSE} 
 lit_2001 <- gbifliterature::get_gbif_literature_year(year = 2001)
 
 ```
@@ -36,7 +39,7 @@ You can print the output object if you want. The output is a data frame containi
 In the last example we observe that it's possible to map this function passing the year parameter:
 
 
-```{r}
+```{r eval=FALSE}
 
 literature_df <- purrr::map_df(2000:2022, function(x){
     gbifliterature::get_gbif_literature_year(year = x)

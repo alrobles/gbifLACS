@@ -9,6 +9,8 @@ navbar:
         - text: "Articles"
         - text: "Topic Modeling"
           href: topic-modeling.html
+        - text: "Get GBIF literature data"
+          href: gbif-literature-data.html
       href: workflow.html
     - text: "About"
       href: about.html
