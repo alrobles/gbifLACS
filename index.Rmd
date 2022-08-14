@@ -20,7 +20,9 @@ This is GBIF Literature Abstract Classification System. Its designed to score if
 
 *** 
 Try our products, just click on the link in the left bar!
-***
+
+
+embed_url("https://youtu.be/C49WbusD1xc")
 
 # Introduction
 
@@ -32,7 +34,7 @@ Our specific use case is to classify abstracts that are related to *host-parasit
 
 We additionally carry out a *topic analysis* in order to group the GBIF abstracts in multi-dimensional topic space. These topic groups show trends in GBIF-associated research generally, as well as in the context of host-parasite interactions that are documented in GBIF datasets. Comparison of topic groups relative to PU classification scores are designed to further disentangle research foci of abstracts, and will facilitate later re-integration of this information into GBIF.
 
-Finally, all the information and tools generated for this project are free and openly available for the GBIF community to re-use and apply to additional research questions. Four open-source products were created to help disseminate this work (Fig. 1): (i) an R package called [*abstractsHostParasites*](https://github.com/alrobles/abstractsHostParasites), which includes all tools for generating PU text classification models and processing the associated data; (ii) [*lacsRestAPI*](https://github.com/alrobles/lacsRestAPI), the API used to classify GBIF abstracts relative to the text classification model; (iii) an annotated database of the parsed GBIF abstracts appended with the classification scores (insert link); and (iv) the web app hosted at [https://gbif.lacs.info/](https://gbif.lacs.info/) for exploring, downloading, and re-using all project information.
+Finally, all the information and tools generated for this project are free and openly available for the GBIF community to re-use and apply to additional research questions. Four open-source products were created to help disseminate this work (Fig. 1): (i) an R package called [*abstractsHostParasites*](https://github.com/alrobles/abstractsHostParasites), which includes all tools for generating PU text classification models and processing the associated data; (ii) [*lacsRestAPI*](https://github.com/alrobles/lacsRestAPI), the API used to classify GBIF abstracts relative to the text classification model; (iii) an annotated database of the parsed GBIF abstracts appended with the classification scores ([8 Mb](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv)); and (iv) the web app hosted at [https://gbif.lacs.info/](https://gbif.lacs.info/) for exploring, downloading, and re-using all project information.
 
 Overall, it is our goal that by linking GBIF abstracts with the underlying ecological interaction records that they describe, we will be one step closer to creating a comprehensive ecological knowledge graph describing Earth’s complex and increasingly threatened ecosystems.
 
@@ -62,20 +64,20 @@ knitr::include_graphics("image/gbifLACS_diagram.jpeg")
 
 ## Host Parasite models
 ### Initial data collection
-First we retrive research papers information from Glogal Mammal Parasite Database [gmpd](https://gmpd2.ecology.uga.edu/) y Zover Database  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi). We extract all the avaliable citations in both database. The information available in both open databases does not contain abstracts of the articles.
+First we retrive research papers information from Global Mammal Parasite Database [gmpd](https://gmpd2.ecology.uga.edu/) and the ZOVER Database  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi). We extracted all the avaliable citations in both databases. The information available in these open databases does not contain abstracts of the articles, so we had to additionally retrieve them.
 
-We provide this data through the following link in [csv](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv) format.
+We provide these data through the following link in [csv](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv) format.
 
 ### Abstract search
-Follow this we search information from [gmpd](https://gmpd2.ecology.uga.edu/) and  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi) in order to find the abstract and the doi related to each citation in mencionated sources. We search in [crossref](https://www.crossref.org/) and [PubMed](https://pubmed.ncbi.nlm.nih.gov/) throught their respective 'API'.
+Follow this we search information from [gmpd](https://gmpd2.ecology.uga.edu/) and  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi) in order to find the abstract and the doi related to each citation in mentioned sources. We search in [crossref](https://www.crossref.org/) and [PubMed](https://pubmed.ncbi.nlm.nih.gov/) using their respective APIs.
 
 ### Random abstracts
-This text classification problem can be framed in the class [one-class classification](https://en.wikipedia.org/wiki/One-class_classification) problem type. For this reason we connect to [crossref API](https://api.crossref.org/swagger-ui/index.html) and generate a random abstracts table. 
+This text classification problem can be framed as a [one-class classification](https://en.wikipedia.org/wiki/One-class_classification) problem type. For this reason we connected to the [crossref API](https://api.crossref.org/swagger-ui/index.html) to generate a random abstracts table. 
 
 ### PU learning
-For solve this one-class classification problem we follow @zhou2022plus to implement Positive and unlabeled Learning from Unbalanced cases and Sparse structures (PLUS) algorithm. In order to ingest data to this algorithm we assign the random abstracts as an unknown class and transform the abstract table in a document term matrix taking in account the n-grams (from 1 to 5). This give us a vocabulary of around 1 500 000 terms in 4000 documents. We implement this step in a convenient wrap that given a data frame with abstracts of both clases (target class and unknown class) automatically generates both the model and the necessary vocabulary to classify if an abstract belongs to one (targe) or another (unknown) class.
+For solving this one-class classification problem, we followed @zhou2022plus to implement their Positive and unlabeled Learning from Unbalanced cases and Sparse structures (PLUS) algorithm. In order to ingest data to this algorithm, we assigned the random abstracts as an unknown class and transformed the abstract table into a Document Term Matrix (DTM), taking in account the n-grams (from 1 to 5). This give us a vocabulary of around 1,500,000 terms in 4,000 documents. We implemented this step in a convenient wrapper that gives a data frame with abstracts of both clases (target class and unknown class) automatically generates both the model and the necessary vocabulary to classify if an abstract belongs to one (target) or another (unknown) class.
 
-Both the abstract search, the generation of random abstracts and the implementation of the PU learning model are available on [github](https://github.com/alrobles/abstractsHostParasites) in our abstractsHosParasites R package. Here we implement an abstract classification model for host parasite literature. 
+Both the abstract search, the generation of random abstracts and the implementation of the PU learning model are available on [github](https://github.com/alrobles/abstractsHostParasites) in our abstractsHostParasites R package. Here we implement an abstract classification model for host parasite literature. 
 
 ## REST API model implementation
 In order to make available to the entire GBIF community and other research communities we implement our abstract classification model as a REST API following @selivanov2022rest. We share share this code on [github](https://github.com/alrobles/lacsRestAPI). We deploy this API on a personal server at "http://www.vidaanalytics.com:8082/scoreabstract". You also can try our shiny app to copy and paste an abstract to get evaluated. (See below)
@@ -95,12 +97,10 @@ Try our abstract classification API.
 ```{r echo=FALSE}
 knitr::include_app(url = "https://alrobles.shinyapps.io/shinyabstractclass",height = "300px")
 ```
-
 ***
 
 
 ***
-
 This is our topic trends we model through literature
 ```{r echo=FALSE}
 knitr::include_app(url = "https://alrobles.shinyapps.io/gbifLiteratureTopics/",height = "600px")
