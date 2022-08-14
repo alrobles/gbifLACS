@@ -1,0 +1,88 @@
+---
+title: "gbif Topic Modelling"
+author: "Angel Robles"
+date: "8/14/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+```{r eval = FALSE}
+```
+
+
+```{r eval = FALSE}
+library(gbifliterature)
+library(tidyverse)
+library(textcat)
+library(text2vec)
+```
+
+Part A
+
+```{r eval = FALSE}
+gbif_lit_list <- 2000:2022 %>%
+  purrr::map(gbifliterature::get_gbif_literature_year)
+gbif_lit_df <- gbif_lit_list %>% purrr::reduce(dplyr::bind_rows)
+
+gbif_lit_df <- gbif_lit_df %>%
+  dplyr::filter(abstract != "(no abstract available)")
+
+gbif_lit_df_abstracts_language <- gbif_lit_df %>%
+  dplyr::select(title, abstract, year, topics) %>%
+  dplyr::mutate(language = textcat::textcat(abstract))
+gbif_lit_df_abstracts_english <- gbif_lit_df_abstracts_language %>% filter(language == "english")
+```
+
+Part B 
+
+```{r eval = FALSE}
+gbif_lit_df_abstracts_english <- gbif_lit_df_abstracts_english %>%
+  select(title, abstract, year) %>%
+  mutate(abstract = prep_fun(abstract)) %>%
+  mutate(abstract = str_trim(abstract))
+```
+```{r eval = FALSE}
+Abstracts <- gbif_lit_df_abstracts_english$abstract
+
+it = text2vec::itoken(Abstracts,
+                           preprocessor = prep_fun,
+                           tok_fun = word_tokenizer,
+                           progressbar = FALSE)
+stop_words <- unlist(stopwords::data_stopwords_nltk)
+
+v <-  text2vec::create_vocabulary(it,
+                                  ngram = c(1L, 3L),
+                                  stopwords = stop_words)
+v <- v %>% dplyr::filter(!grepl(pattern = "^[0-9]", .data$term ))
+v <- v %>% dplyr::filter(grepl(pattern = "^[a-z]", .data$term ))
+v <- v %>% dplyr::filter(stringi::stri_enc_isascii(term))
+v <- v %>% dplyr::filter(nchar(term) >=  3)
+
+pruned_vocab = text2vec::prune_vocabulary(v, term_count_min = 10,
+                                          doc_count_min = 10)
+
+
+readr::write_rds(pruned_vocab, "data-rawgbif_literature_pruned_vocab.rds")
+vectorizer <-  text2vec::vocab_vectorizer(pruned_vocab)
+dtm  <-  text2vec::create_dtm(it, vectorizer)
+tfidf = text2vec::TfIdf$new()
+
+lda_model <-  LDA$new(n_topics = 10,
+                      doc_topic_prior = 0.1,
+                      topic_word_prior = 0.01)
+
+doc_topic_distr <-  lda_model$fit_transform(x = dtm, n_iter = 1000,
+                                            convergence_tol = 0.001, n_check_convergence = 25,
+                                            progressbar = FALSE)
+
+lda_model$get_top_words(n = 10, topic_number = c(1:10), lambda = 0.4)
+#DIR = "data-raw/LDAvisualization"
+lda_model$plot()
+# now you can serve it from other session
+```
+

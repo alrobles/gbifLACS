@@ -58,7 +58,7 @@ knitr::include_graphics("image/gbifLACS_diagram.jpeg")
 ```
 
 ## Host Parasite models
-### initial data collection
+### Initial data collection
 First we retrive research papers information from Glogal Mammal Parasite Database [gmpd](https://gmpd2.ecology.uga.edu/) y Zover Database  [zover](http://www.mgc.ac.cn/cgi-bin/ZOVER/main.cgi). We extract all the avaliable citations in both database. The information available in both open databases does not contain abstracts of the articles.
 
 We provide this data throuth the following link in [csv](https://raw.githubusercontent.com/alrobles/abstractsHostParasites/main/data-raw/df_abstracts.csv) format.
@@ -72,11 +72,13 @@ This text classification problem can be framed in the class [one-class classific
 ### PU learning
 For solve this one-class classification problem we follow @zhou2022plus to implement Positive and unlabeled Learning from Unbalanced cases and Sparse structures (PLUS) algorithm. In order to ingest data to this algorithm we assign the random abstracts as an unknown class and transform the abstract table in a document term matrix taking in account the n-grams (from 1 to 5). This give us a vocabulary of around 1 500 000 terms in 4000 documents. We implement this step in a convenient wrap that given a data frame with abstracts of both clases (target class and unknown class) automatically generates both the model and the necessary vocabulary to classify if an abstract belongs to one (targe) or another (unknown) class.
 
-
 Both the abstract search, the generation of random abstracts and the implementation of the PU learning model are available on [github](https://github.com/alrobles/abstractsHostParasites) in our abstractsHosParasites R package. Here we implement an abstract classification model for host parasite literature. 
 
 ## REST API model implementation
-In order to make available to the entire GBIF community
+In order to make available to the entire GBIF community and other research communities we implement our abstract classification model as a REST API following @selivanov2022rest. We share share this code on [github](https://github.com/alrobles/lacsRestAPI). We deploy this API on a personal server at "http://www.vidaanalytics.com:8082/scoreabstract". You also can try our shiny app to copy and paste an abstract to get evaluated. (See below)
+
+
+
 
 # Products
 

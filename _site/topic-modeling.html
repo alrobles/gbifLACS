@@ -9,10 +9,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Angel Luis Robles Fernandez &amp; Nathan Upham - Arizona State University" />
+<meta name="author" content="Angel Robles" />
 
 
-<title>gbifLACS Workflow</title>
+<title>gbif Topic Modelling</title>
 
 <script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -278,15 +278,74 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">gbifLACS Workflow</h1>
-<h4 class="author">Angel Luis Robles Fernandez &amp; Nathan Upham -
-Arizona State University</h4>
+<h1 class="title toc-ignore">gbif Topic Modelling</h1>
+<h4 class="author">Angel Robles</h4>
+<h4 class="date">8/14/2022</h4>
 
 </div>
 
 
-<p>In this Vignette we describe more deeply the workflow we follow to
-reach our goal.</p>
+<div id="r-markdown" class="section level2">
+<h2>R Markdown</h2>
+<pre class="r"><code>library(gbifliterature)
+library(tidyverse)
+library(textcat)
+library(text2vec)</code></pre>
+<p>Part A</p>
+<pre class="r"><code>gbif_lit_list &lt;- 2000:2022 %&gt;%
+  purrr::map(gbifliterature::get_gbif_literature_year)
+gbif_lit_df &lt;- gbif_lit_list %&gt;% purrr::reduce(dplyr::bind_rows)
+
+gbif_lit_df &lt;- gbif_lit_df %&gt;%
+  dplyr::filter(abstract != &quot;(no abstract available)&quot;)
+
+gbif_lit_df_abstracts_language &lt;- gbif_lit_df %&gt;%
+  dplyr::select(title, abstract, year, topics) %&gt;%
+  dplyr::mutate(language = textcat::textcat(abstract))
+gbif_lit_df_abstracts_english &lt;- gbif_lit_df_abstracts_language %&gt;% filter(language == &quot;english&quot;)</code></pre>
+<p>Part B</p>
+<pre class="r"><code>gbif_lit_df_abstracts_english &lt;- gbif_lit_df_abstracts_english %&gt;%
+  select(title, abstract, year) %&gt;%
+  mutate(abstract = prep_fun(abstract)) %&gt;%
+  mutate(abstract = str_trim(abstract))</code></pre>
+<pre class="r"><code>Abstracts &lt;- gbif_lit_df_abstracts_english$abstract
+
+it = text2vec::itoken(Abstracts,
+                           preprocessor = prep_fun,
+                           tok_fun = word_tokenizer,
+                           progressbar = FALSE)
+stop_words &lt;- unlist(stopwords::data_stopwords_nltk)
+
+v &lt;-  text2vec::create_vocabulary(it,
+                                  ngram = c(1L, 3L),
+                                  stopwords = stop_words)
+v &lt;- v %&gt;% dplyr::filter(!grepl(pattern = &quot;^[0-9]&quot;, .data$term ))
+v &lt;- v %&gt;% dplyr::filter(grepl(pattern = &quot;^[a-z]&quot;, .data$term ))
+v &lt;- v %&gt;% dplyr::filter(stringi::stri_enc_isascii(term))
+v &lt;- v %&gt;% dplyr::filter(nchar(term) &gt;=  3)
+
+pruned_vocab = text2vec::prune_vocabulary(v, term_count_min = 10,
+                                          doc_count_min = 10)
+
+
+readr::write_rds(pruned_vocab, &quot;data-rawgbif_literature_pruned_vocab.rds&quot;)
+vectorizer &lt;-  text2vec::vocab_vectorizer(pruned_vocab)
+dtm  &lt;-  text2vec::create_dtm(it, vectorizer)
+tfidf = text2vec::TfIdf$new()
+
+lda_model &lt;-  LDA$new(n_topics = 10,
+                      doc_topic_prior = 0.1,
+                      topic_word_prior = 0.01)
+
+doc_topic_distr &lt;-  lda_model$fit_transform(x = dtm, n_iter = 1000,
+                                            convergence_tol = 0.001, n_check_convergence = 25,
+                                            progressbar = FALSE)
+
+lda_model$get_top_words(n = 10, topic_number = c(1:10), lambda = 0.4)
+#DIR = &quot;data-raw/LDAvisualization&quot;
+lda_model$plot()
+# now you can serve it from other session</code></pre>
+</div>
 
 <p>Except where otherwise noted, content on this site is licensed under the CC-BY license.</p>
 

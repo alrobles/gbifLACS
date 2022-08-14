@@ -14,6 +14,7 @@
 
 <title>GBIF LACS: GBIF Literature Abstract Classification System</title>
 
+<script src="site_libs/header-attrs-2.14/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
@@ -347,8 +348,18 @@ div.tocify {
         <li>
   <a href="index.html">Home</a>
 </li>
-<li>
-  <a href="workflow.html">Workflow</a>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Workflow
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li class="dropdown-header">Articles</li>
+    <li>
+      <a href="topic-modeling.html">Topic Modeling</a>
+    </li>
+  </ul>
 </li>
 <li>
   <a href="about.html">About</a>
@@ -445,7 +456,7 @@ Fig 1. Scheme representing the main steps of the gbif LACS workflow
 <h2><span class="header-section-number">3.1</span> Host Parasite
 models</h2>
 <div id="initial-data-collection" class="section level3" number="3.1.1">
-<h3><span class="header-section-number">3.1.1</span> initial data
+<h3><span class="header-section-number">3.1.1</span> Initial data
 collection</h3>
 <p>First we retrive research papers information from Glogal Mammal
 Parasite Database <a href="https://gmpd2.ecology.uga.edu/">gmpd</a> y
@@ -490,13 +501,27 @@ implement this step in a convenient wrap that given a data frame with
 abstracts of both clases (target class and unknown class) automatically
 generates both the model and the necessary vocabulary to classify if an
 abstract belongs to one (targe) or another (unknown) class.</p>
+<p>Both the abstract search, the generation of random abstracts and the
+implementation of the PU learning model are available on <a
+href="https://github.com/alrobles/abstractsHostParasites">github</a> in
+our abstractsHosParasites R package. Here we implement an abstract
+classification model for host parasite literature.</p>
 </div>
-<div id="section" class="section level3" number="3.1.5">
-<h3><span class="header-section-number">3.1.5</span> </h3>
 </div>
-<div id="pu-learning-1" class="section level3" number="3.1.6">
-<h3><span class="header-section-number">3.1.6</span> PU learning</h3>
-</div>
+<div id="rest-api-model-implementation" class="section level2"
+number="3.2">
+<h2><span class="header-section-number">3.2</span> REST API model
+implementation</h2>
+<p>In order to make available to the entire GBIF community and other
+research communities we implement our abstract classification model as a
+REST API following <span class="citation">Selivanov and Klevtsov
+(2022)</span>. We share share this code on <a
+href="https://github.com/alrobles/lacsRestAPI">github</a>. We deploy
+this API on a personal server at “<a
+href="http://www.vidaanalytics.com:8082/scoreabstract"
+class="uri">http://www.vidaanalytics.com:8082/scoreabstract</a>”. You
+also can try our shiny app to copy and paste an abstract to get
+evaluated. (See below)</p>
 </div>
 </div>
 <div id="products" class="section level1" number="4">
@@ -512,6 +537,10 @@ parasite interactions in PubMed</p>
 <hr />
 <hr />
 <div id="refs" class="references csl-bib-body hanging-indent">
+<div id="ref-selivanov2022rest" class="csl-entry">
+Selivanov, Dmitry, and Artem Klevtsov. 2022. <em>RestRserve: A Framework
+for Building HTTP API</em>.
+</div>
 <div id="ref-zhou2022plus" class="csl-entry">
 Zhou, Junyi, Xiaoyu Lu, Wennan Chang, Changlin Wan, Xiongbin Lu, Chi
 Zhang, and Sha Cao. 2022. <span>“PLUS: Predicting Cancer Metastasis

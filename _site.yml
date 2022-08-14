@@ -5,6 +5,10 @@ navbar:
     - text: "Home"
       href: index.html
     - text: "Workflow"
+      menu:
+        - text: "Articles"
+        - text: "Topic Modeling"
+          href: topic-modeling.html
       href: workflow.html
     - text: "About"
       href: about.html
