@@ -43,4 +43,6 @@ In the last example we observe that it's possible to map this function passing t
 
 literature_df <- purrr::map_df(2000:2022, function(x){
     gbifliterature::get_gbif_literature_year(year = x)
-  })```
+  })
+```
+
