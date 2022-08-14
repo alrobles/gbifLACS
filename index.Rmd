@@ -19,12 +19,12 @@ knitr::opts_chunk$set(cache = TRUE)
 This is GBIF Literature Abstract Classification System. Its designed to score if an abstract from scientific literature its related to host - parasite literature.We use this API to asses GBIF literature in order to find papers related with host - parasite interactions. 
 
 *** 
-Try our products, just click on the link in the left bar!
 
-```{r}
-library("vembedr")
-embed_url("https://youtu.be/C49WbusD1xc")
+```{r echo=FALSE}
+vembedr::embed_url(url = "https://youtu.be/C49WbusD1xc")
 ```
+
+Try our products, just click on the link in the left bar!
 
 
 # Introduction
@@ -58,6 +58,7 @@ We show here a set of tools designed to:
 
 
 # Methodology
+***
 
 The scheme below represents the overall workflow 
 
@@ -91,24 +92,23 @@ We curate this information and provide this data through the following link in [
 
 
 
-
-
 # Products
+***
 
 Try our abstract classification API. 
+
 
 ```{r echo=FALSE}
 knitr::include_app(url = "https://alrobles.shinyapps.io/shinyabstractclass",height = "300px")
 ```
-***
 
 
 ***
+
 This is our topic trends we model through literature
 ```{r echo=FALSE}
 knitr::include_app(url = "https://alrobles.shinyapps.io/gbifLiteratureTopics/",height = "600px")
 ```
-***
 
 ***
 Also try our search engine to discover papers related with mammal - parasite
