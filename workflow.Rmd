@@ -1,0 +1,11 @@
+---
+title: "gbifLACS Workflow"
+author: "Angel Luis Robles Fernandez & Nathan Upham - Arizona State University"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+In this Vignette we describe more deeply the workflow we follow to reach our goal.

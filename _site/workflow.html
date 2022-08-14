@@ -12,11 +12,11 @@
 <meta name="author" content="Angel Luis Robles Fernandez &amp; Nathan Upham - Arizona State University" />
 
 
-<title>GBIF LACS: GBIF Literature Abstract Classification System</title>
+<title>gbifLACS Workflow</title>
 
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/lumen.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
@@ -29,9 +29,6 @@
        h6 {font-size: 12px;}
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
-<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
-<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -226,69 +223,6 @@ $(document).ready(function () {
 
 
 
-<style type="text/css">
-
-#TOC {
-  margin: 25px 0px 20px 0px;
-}
-@media (max-width: 768px) {
-#TOC {
-  position: relative;
-  width: 100%;
-}
-}
-
-@media print {
-.toc-content {
-  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
-  float: right;
-}
-}
-
-.toc-content {
-  padding-left: 30px;
-  padding-right: 40px;
-}
-
-div.main-container {
-  max-width: 1200px;
-}
-
-div.tocify {
-  width: 20%;
-  max-width: 260px;
-  max-height: 85%;
-}
-
-@media (min-width: 768px) and (max-width: 991px) {
-  div.tocify {
-    width: 25%;
-  }
-}
-
-@media (max-width: 767px) {
-  div.tocify {
-    width: 100%;
-    max-width: none;
-  }
-}
-
-.tocify ul, .tocify li {
-  line-height: 20px;
-}
-
-.tocify-subheader .tocify-item {
-  font-size: 0.90em;
-}
-
-.tocify .list-group-item {
-  border-radius: 0px;
-}
-
-
-</style>
-
-
 
 </head>
 
@@ -296,16 +230,6 @@ div.tocify {
 
 
 <div class="container-fluid main-container">
-
-
-<!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row">
-<div class="col-xs-12 col-sm-4 col-md-3">
-<div id="TOC" class="tocify">
-</div>
-</div>
-
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -338,92 +262,24 @@ div.tocify {
     </div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
-<div class="upper-right-logo"> </div>
 
 <div id="header">
 
 
 
-<h1 class="title toc-ignore">GBIF LACS: GBIF Literature Abstract
-Classification System</h1>
+<h1 class="title toc-ignore">gbifLACS Workflow</h1>
 <h4 class="author">Angel Luis Robles Fernandez &amp; Nathan Upham -
 Arizona State University</h4>
 
 </div>
 
 
-<p>This is GBIF Literature Abstract Classification System. Its designed
-to score if an abstract from scientific literature its related to host -
-parasite literature.We use this API to asses GBIF literature in order to
-find papers related with host - parasite interactions.</p>
-<hr />
-<p>Try our products, just click on the link in the left bar! ***</p>
-<div id="introduction" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Introduction</h1>
-<p>The objective of this project is to have a tool that allows the
-classification of the abstracts related to the GBIF literature.</p>
-<p>A specific use case is the creation of a text classification model
-that identifies those abstracts related to host-parasite interactions
-and filters the literature available in the GBIF Literature API in order
-specifically search GBIF datasets associated with host - parasite
-interaction</p>
-<p>Another objective is to carry out a topic analysis in the abstracts
-of the GBIF literature and group the papers into these topics to observe
-the trend of research associated with GBIF in recent years.</p>
-<p>Finally, all the information generated with these tools is available
-to the GBIF community for its free use in scientific research in the
-most open and transparent way possible, in accordance with our technical
-limitations.</p>
-</div>
-<div id="objectives" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Objectives</h1>
-<hr />
-<p>We show here a set of tools designed to</p>
-<ul>
-<li><p>Find abstracts from literature stored in open data base through
-PubMed <a
-href="https://www.ncbi.nlm.nih.gov/home/develop/api/">entrez</a> API and
-Cross Reference <a
-href="https://api.crossref.org/">crossref</a></p></li>
-<li><p>Retrieve random abstracts from Cross Reference <a
-href="https://api.crossref.org/">crossref</a></p></li>
-<li><p>Generate models to classify abstracts from a specific topic using
-PU learning approach</p></li>
-<li><p>Deploy a web API with a abstract classification model to evaluate
-whether or not a given abstract belongs to the class of modeled
-abstracts</p></li>
-<li><p>A GBIF Literature API wrap that retrives GBIF Literature
-information</p></li>
-</ul>
-</div>
-<div id="methodology" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Methodology</h1>
-<p>The scheme below represents the overall workflow</p>
-<div class="figure" style="text-align: center">
-<img src="image/gbifLACS_diagram.jpeg" alt="Fig 1. Scheme representing the main steps of the gbif LACS workflow" width="80%" />
-<p class="caption">
-Fig 1. Scheme representing the main steps of the gbif LACS workflow
-</p>
-</div>
-</div>
-<div id="products" class="section level1" number="4">
-<h1><span class="header-section-number">4</span> Products</h1>
-<p>Try our abstract classification API.</p>
-<iframe src="https://alrobles.shinyapps.io/shinyabstractclass?showcase=0" width="672" height="300px" data-external="1">
-</iframe>
-<hr />
-<p>Also try our search engine to discover papers related with mammal -
-parasite interactions in PubMed</p>
-<iframe src="https://www.vidaanalytics.com/shiny/sample-apps/mammals_virus_text_class/?showcase=0" width="672" height="600px" data-external="1">
-</iframe>
-<hr />
-<hr />
-</div>
+<p>In this Vignette we describe more deeply the workflow we follow to
+reach our goal.</p>
+
+<p>Except where otherwise noted, content on this site is licensed under the CC-BY license.</p>
 
 
-
-</div>
-</div>
 
 </div>
 
@@ -456,35 +312,6 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
-<script>
-$(document).ready(function ()  {
-
-    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
-    $('.unlisted.unnumbered').addClass('toc-ignore')
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>

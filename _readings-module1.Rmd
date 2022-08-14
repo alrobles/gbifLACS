@@ -1,0 +1,23 @@
+---
+title: "GBIF LACS: GBIF Literature Cbstract classification System"
+author: "Angel Luis Robles Fernandez & Nathan Upham - Arizona State University"
+output:
+  html_document:
+---
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(cache = TRUE)
+```
+
+# Introduction
+In this vignette we are going to install the r necesary R packages.
+
+```{r setup}
+remotes::install_github("alrobles/gbifliterature")
+remotes::install_github("alrobles/abstractsHostParasites")
+
+
+```
+
+
+remotes::install_github("alrobles/gbifliterature")

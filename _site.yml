@@ -4,6 +4,8 @@ navbar:
   left:
     - text: "Home"
       href: index.html
+    - text: "Workflow"
+      href: workflow.html
     - text: "About"
       href: about.html
 output:
